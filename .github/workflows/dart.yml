@@ -3,25 +3,25 @@ name: Build & Upload APK to Google Drive
 on:
   push:
     branches:
-      - main
+      - main # Ubah sesuai branch yang kamu pakai
 
 jobs:
-  build-upload:
+  build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.0" # Ganti sesuai versi project kamu
+          flutter-version: "3.24.5"
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build APK (release)
         run: flutter build apk --release
 
       - name: Install Rclone
