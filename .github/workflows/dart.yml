@@ -35,4 +35,4 @@ jobs:
 
       - name: Upload APK to Google Drive
         run: |
-          rclone copy build/app/outputs/flutter-apk/app-release.apk gdrive:/unplgd --drive-chunk-size=64M --progress
+          rclone copy build/app/outputs/flutter-apk/app-release.apk cicd gdrive:/unplgd --drive-chunk-size=64M --progress
