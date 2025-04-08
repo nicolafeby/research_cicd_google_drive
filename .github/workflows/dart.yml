@@ -42,20 +42,11 @@ jobs:
         run: |
           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
 
-      - name: Trigger Apps Script via Node
-        run: |
-          echo "const axios = require('axios');
-          axios.get('https://script.google.com/macros/s/AKfycbwbvvEbsf2fTMQLvU8TmH69xXEYADS5bV2OlFBhnZokf03Wp3ZXxksyHybLhUGYJSTn2w/exec')
-            .then(res => {
-              console.log('✅ Triggered:', res.data);
-            })
-            .catch(err => {
-              console.error('❌ Error:', err.message);
-              process.exit(1);
-            });" > trigger.js
-
-          npm install axios
-          node trigger.js
+      - name: Trigger Google Apps Script via HTTP client
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://script.google.com/macros/s/AKfycbwbvvEbsf2fTMQLvU8TmH69xXEYADS5bV2OlFBhnZokf03Wp3ZXxksyHybLhUGYJSTn2w/exec'
+          method: 'GET'
 
       # - name: Trigger Apps Script via wget
       #   run: |
