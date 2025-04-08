@@ -39,3 +39,7 @@ jobs:
       - name: Upload APK to GCS
         run: |
           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
+
+      - name: Trigger Apps Script to copy APK to Google Drive
+        run: |
+          curl -s -L 'https://script.google.com/macros/s/AKfycbzg9d_C7pd2TYByz4qC0pnLRT3wBk3PO6wL3n95KG-Rrqw_i-X5hgaecqgkqzUorKAfxg/exec'
