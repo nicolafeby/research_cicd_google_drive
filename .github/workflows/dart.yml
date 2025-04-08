@@ -42,6 +42,21 @@ jobs:
         run: |
           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
 
-      - name: Trigger Apps Script via wget
+      - name: Trigger Apps Script via Node
         run: |
-          wget -qO- 'https://script.google.com/macros/s/AKfycbwbvvEbsf2fTMQLvU8TmH69xXEYADS5bV2OlFBhnZokf03Wp3ZXxksyHybLhUGYJSTn2w/exec'
+          echo "const axios = require('axios');
+          axios.get('https://script.google.com/macros/s/AKfycbwbvvEbsf2fTMQLvU8TmH69xXEYADS5bV2OlFBhnZokf03Wp3ZXxksyHybLhUGYJSTn2w/exec')
+            .then(res => {
+              console.log('✅ Triggered:', res.data);
+            })
+            .catch(err => {
+              console.error('❌ Error:', err.message);
+              process.exit(1);
+            });" > trigger.js
+
+          npm install axios
+          node trigger.js
+
+      # - name: Trigger Apps Script via wget
+      #   run: |
+      #     wget -qO- 'https://script.google.com/macros/s/AKfycbwbvvEbsf2fTMQLvU8TmH69xXEYADS5bV2OlFBhnZokf03Wp3ZXxksyHybLhUGYJSTn2w/exec'
