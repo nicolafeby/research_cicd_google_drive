@@ -21,10 +21,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Run build_runner
-      - name: Run build_runner
-        run: dart run build_runner build --delete-conflicting-outputs
-
       # Build APK
       - name: Build release APK
         run: flutter build apk --release
@@ -34,7 +30,7 @@ jobs:
         with:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: github-actions-gcs # Ganti sesuai project kamu
+          project_id: research-cicd # Ganti sesuai project kamu
 
       # Upload to GCS
       - name: Upload APK to GCS
