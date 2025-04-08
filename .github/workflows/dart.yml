@@ -44,4 +44,4 @@ jobs:
 
       - name: Trigger Apps Script to copy APK to Google Drive
         run: |
-          curl -s -L 'https://script.google.com/macros/s/AKfycbzg9d_C7pd2TYByz4qC0pnLRT3wBk3PO6wL3n95KG-Rrqw_i-X5hgaecqgkqzUorKAfxg/exec'
+          curl -s -L 'https://script.google.com/macros/s/AKfycbwlANZJjKwX6dtEpR24zr3ZQ7AijhwS9_HIMCA33SPquSBXekCm2BrSHQoZnc9p1yy3/exec'
