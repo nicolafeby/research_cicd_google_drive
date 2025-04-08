@@ -20,61 +20,38 @@ jobs:
           distribution: "temurin"
           cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # # Checkout repository
+      # - uses: actions/checkout@v2
 
-      - name: Build APK
-        uses: gradle/gradle-command-action@v2
+      # Setup Flutter
+      - uses: subosito/flutter-action@v2
         with:
-          arguments: assembleDebug
-# name: Build & Upload Flutter APK to GCS
+          flutter-version: "3.24.5" # Sesuaikan versi Flutter kamu
 
-# on:
-#   push:
-#     branches: [main]
+      # Run pub get
+      - name: Install dependencies
+        run: flutter pub get
 
-# concurrency:
-#   group: ${{ github.workflow }}-${{ github.ref }}
-#   cancel-in-progress: true
+      # Build APK
+      - name: Build release APK
+        run: flutter build apk --release
 
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
+      # Setup Google Cloud SDK
+      - uses: google-github-actions/setup-gcloud@v0
+        with:
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: research-cicd # Ganti sesuai project kamu
 
-#     steps:
-#       # Checkout repository
-#       - uses: actions/checkout@v2
+      # Upload to GCS
+      - name: Upload APK to GCS
+        run: |
+          gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
 
-#       # Setup Flutter
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           flutter-version: "3.24.5" # Sesuaikan versi Flutter kamu
-
-#       # Run pub get
-#       - name: Install dependencies
-#         run: flutter pub get
-
-#       # Build APK
-#       - name: Build release APK
-#         run: flutter build apk --release
-
-#       # Setup Google Cloud SDK
-#       - uses: google-github-actions/setup-gcloud@v0
-#         with:
-#           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-#           service_account_key: ${{ secrets.GCP_SA_KEY }}
-#           project_id: research-cicd # Ganti sesuai project kamu
-
-#       # Upload to GCS
-#       - name: Upload APK to GCS
-#         run: |
-#           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
-
-#       - name: Upload apk to Google Drive
-#         uses: logickoder/google-drive-upload@test
-#         with:
-#           credentials: ${{ secrets.GCP_SA_KEY }}
-#           filename: "app/build/outputs/apk/debug/app-debug.apk"
-#           folderID: ${{ secrets.DRIVE_FOLDER_ID }}
-#           overwrite: "true"
-
+      - name: Upload apk to Google Drive
+        uses: logickoder/google-drive-upload@test
+        with:
+          credentials: ${{ secrets.GCP_SA_KEY }}
+          filename: "app/build/outputs/apk/debug/app-debug.apk"
+          folderID: ${{ secrets.DRIVE_FOLDER_ID }}
+          overwrite: "true"
