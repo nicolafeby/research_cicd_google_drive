@@ -33,6 +33,11 @@ jobs:
           mkdir -p ~/.config/rclone
           echo "${{ secrets.RCLONE_CONFIG_BASE64 }}" | base64 -d > ~/.config/rclone/rclone.conf
 
+      - name: Debug rclone.conf
+        run: |
+          echo "==== rclone.conf ===="
+          cat ~/.config/rclone/rclone.conf
+
       - name: Upload APK to Google Drive
         run: |
           rclone copy build/app/outputs/flutter-apk/app-release.apk cicd_gdrive:/unplgd --drive-chunk-size=64M --progress
