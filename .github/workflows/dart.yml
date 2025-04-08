@@ -1,36 +1,38 @@
-name: Build & Upload to Google Drive
+name: Build & Upload APK to Google Drive
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main # Ubah sesuai branch yang kamu pakai
 
 jobs:
-  build:
+  build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout source code
         uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "stable"
+          flutter-version: "3.24.5"
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run build_runner
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Build APK
+      - name: Build APK (release)
         run: flutter build apk --release
+
+      - name: Install Rclone
+        run: |
+          curl https://rclone.org/install.sh | sudo bash
 
       - name: Setup Rclone
         run: |
           mkdir -p ~/.config/rclone
           echo "${{ secrets.RCLONE_CONFIG_BASE64 }}" | base64 -d > ~/.config/rclone/rclone.conf
 
-      - name: Upload to Google Drive
+      - name: Upload APK to Google Drive
         run: |
           rclone copy build/app/outputs/flutter-apk/app-release.apk cicd_gdrive:/unplgd --drive-chunk-size=64M --progress
