@@ -20,38 +20,29 @@ jobs:
           distribution: "temurin"
           cache: gradle
 
-      # # Checkout repository
-      # - uses: actions/checkout@v2
-
-      # Setup Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.5" # Sesuaikan versi Flutter kamu
+          flutter-version: "3.24.5"
 
-      # Run pub get
       - name: Install dependencies
         run: flutter pub get
 
-      # Build APK
       - name: Build release APK
         run: flutter build apk --release
 
-      # Setup Google Cloud SDK
       - uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
-          project_id: research-cicd # Ganti sesuai project kamu
+          project_id: research-cicd
 
-      # Upload to GCS
       - name: Upload APK to GCS
         run: |
           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
 
       - name: Upload APK to Google Drive
-        uses: viamedici/google-drive-upload-action@v1
+        uses: mathisve/gdrive-upload-action@v1
         with:
-          credentials: ${{ secrets.GCP_SA_KEY }}
+          credentials: ${{ secrets.GDRIVE_CREDENTIALS }}
           file: build/app/outputs/flutter-apk/app-release.apk
           folderId: ${{ secrets.DRIVE_FOLDER_ID }}
-          overwrite: "true"
