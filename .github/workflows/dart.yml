@@ -1,4 +1,4 @@
-name: Build & Upload to Google Drive
+name: Build & Upload to GCS
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Set up JDK 17
@@ -21,23 +21,21 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
+          flutter-version: "3.24.5"
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build release APK
+      - name: Build APK
         run: flutter build apk --release
 
-      - name: Install rclone
-        run: |
-          curl https://rclone.org/install.sh | sudo bash
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: research-cicd
 
-      - name: Configure rclone
+      - name: Upload APK to GCS
         run: |
-          mkdir -p ~/.config/rclone
-          echo "${{ secrets.RCLONE_CONFIG }}" > ~/.config/rclone/rclone.conf
-
-      - name: Upload to Google Drive via rclone
-        run: |
-          rclone copy build/app/outputs/flutter-apk/app-release.apk cicd_gdrive:${{ secrets.DRIVE_FOLDER_PATH }} --drive-chunk-size=64M --progress
+          gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
