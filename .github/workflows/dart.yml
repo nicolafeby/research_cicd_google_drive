@@ -48,10 +48,10 @@ jobs:
         run: |
           gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
 
-      - name: Upload apk to Google Drive
-        uses: logickoder/google-drive-upload@test
+      - name: Upload APK to Google Drive
+        uses: viamedici/google-drive-upload-action@v1
         with:
           credentials: ${{ secrets.GCP_SA_KEY }}
-          filename: "app/build/outputs/apk/debug/app-debug.apk"
-          folderID: ${{ secrets.DRIVE_FOLDER_ID }}
+          file: build/app/outputs/flutter-apk/app-release.apk
+          folderId: ${{ secrets.DRIVE_FOLDER_ID }}
           overwrite: "true"
