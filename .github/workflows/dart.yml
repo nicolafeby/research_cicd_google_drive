@@ -35,4 +35,4 @@ jobs:
       # Upload to GCS
       - name: Upload APK to GCS
         run: |
-          gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://github-action-gcs/app-release.apk
+          gsutil cp build/app/outputs/flutter-apk/app-release.apk gs://research-cicd/app-release.apk
